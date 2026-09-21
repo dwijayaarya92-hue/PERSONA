@@ -1,0 +1,110 @@
+# ==========================================
+# Persona - Laravel 12
+# ==========================================
+
+/vendor/
+/node_modules/
+
+# ==========================================
+# Laravel Build & Public Files
+# ==========================================
+
+/public/build/
+/public/hot
+/public/storage
+
+# ==========================================
+# Laravel Storage
+# ==========================================
+
+/storage/*.key
+/storage/pail
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/testing/*
+/storage/framework/views/*
+/storage/logs/*
+
+# ==========================================
+# Laravel Bootstrap Cache
+# ==========================================
+
+/bootstrap/cache/*
+/bootstrap/ssr/*
+
+# ==========================================
+# Environment
+# ==========================================
+
+.env
+.env.backup
+.env.production
+.env.production.local
+
+# Jangan upload secret/key ke GitHub
+*.key
+
+# ==========================================
+# Testing
+# ==========================================
+
+.phpunit.result.cache
+.phpunit.cache
+.php-cs-fixer.cache
+
+# ==========================================
+# IDE
+# ==========================================
+
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ==========================================
+# Operating System
+# ==========================================
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# Docker
+# ==========================================
+
+docker-compose.override.yml
+docker-compose.local.yml
+
+# ==========================================
+# Logs
+# ==========================================
+
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ==========================================
+# Temporary / Local Files
+# ==========================================
+
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ==========================================
+# PHP / Laravel Local Files
+# ==========================================
+
+.phpunit.cache
+.phpunit.result.cache
+
+# ==========================================
+# Development Files
+# ==========================================
+
+Homestead.json
+Homestead.yaml
+.phpactor.json
