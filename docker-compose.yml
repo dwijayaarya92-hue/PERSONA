@@ -22,7 +22,7 @@ services:
       APP_ENV: production
       APP_DEBUG: "false"
       APP_URL: "https://persona.skb-prime.web.id"
-      APP_KEY: "base64:NWq6QkCEv+Gio0pGm9vjvBnWlQfFPcC3nmDJXbW9zAg="
+      APP_KEY: "${APP_KEY:-}"
 
       APP_LOCALE: id
       APP_FALLBACK_LOCALE: id
@@ -37,9 +37,9 @@ services:
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306
-      DB_DATABASE: laravel12
-      DB_USERNAME: laravel
-      DB_PASSWORD: laravel_password
+      DB_DATABASE: "${DB_DATABASE:-laravel12}"
+      DB_USERNAME: "${DB_USERNAME:-laravel}"
+      DB_PASSWORD: "${DB_PASSWORD:-laravel_password}"
 
       # ----------------------------------------
       # Session
@@ -98,7 +98,7 @@ services:
       MAIL_USERNAME: null
       MAIL_PASSWORD: null
       MAIL_FROM_ADDRESS: "hello@example.com"
-      MAIL_FROM_NAME: "${APP_NAME}"
+      MAIL_FROM_NAME: "Persona"
 
       # ----------------------------------------
       # AWS
