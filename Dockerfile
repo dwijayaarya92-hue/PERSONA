@@ -1,5 +1,5 @@
 # ==========================================
-# Laravel 12 - PHP 8.2 FPM
+# Persona - Laravel 12 - PHP 8.2 FPM
 # ==========================================
 
 FROM php:8.2-fpm
@@ -53,7 +53,7 @@ WORKDIR /var/www/html
 
 # ------------------------------------------
 # Copy Composer files first
-# This improves Docker build cache
+# Untuk mempercepat Docker build cache
 # ------------------------------------------
 COPY composer.json composer.lock ./
 
@@ -102,7 +102,7 @@ COPY docker/supervisord.conf \
     /etc/supervisor/conf.d/supervisord.conf
 
 # ------------------------------------------
-# Expose application port
+# Persona application port
 # ------------------------------------------
 EXPOSE 80
 

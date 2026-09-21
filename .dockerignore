@@ -1,5 +1,10 @@
 # ==========================================
+# Persona - Docker Ignore
+# ==========================================
+
+# ==========================================
 # Git
+# Tidak diperlukan di dalam Docker image
 # ==========================================
 .git
 .gitignore
@@ -7,6 +12,7 @@
 
 # ==========================================
 # Environment
+# Jangan masukkan file .env ke image
 # ==========================================
 .env
 .env.*
@@ -14,17 +20,24 @@
 
 # ==========================================
 # Dependencies
+# Akan di-install oleh Composer / NPM
 # ==========================================
 vendor/
 node_modules/
 
 # ==========================================
-# Laravel generated files
+# Laravel Generated Files
 # ==========================================
 storage/logs/*
 storage/framework/cache/*
 storage/framework/sessions/*
+storage/framework/testing/*
 storage/framework/views/*
+
+# ==========================================
+# Laravel Runtime Files
+# ==========================================
+bootstrap/cache/*.php
 
 # ==========================================
 # IDE
@@ -33,15 +46,17 @@ storage/framework/views/*
 .vscode/
 
 # ==========================================
-# OS
+# Operating System
 # ==========================================
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # ==========================================
 # Docker
 # ==========================================
 docker-compose.override.yml
+docker-compose.local.yml
 
 # ==========================================
 # Testing
@@ -50,6 +65,19 @@ docker-compose.override.yml
 .phpunit.cache
 
 # ==========================================
+# Temporary Files
+# ==========================================
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ==========================================
+# Logs
+# ==========================================
+*.log
+
+# ==========================================
 # Documentation
 # ==========================================
-README.md
+# README.md sengaja TIDAK di-ignore

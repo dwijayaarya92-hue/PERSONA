@@ -1,14 +1,14 @@
 services:
 
   # ========================================
-  # NEXORA - Laravel Application
+  # PERSONA - Laravel Application
   # ========================================
   app:
     build:
       context: .
       dockerfile: Dockerfile
 
-    container_name: nexora-app
+    container_name: persona-app
 
     restart: unless-stopped
 
@@ -16,13 +16,27 @@ services:
       - "8099:80"
 
     environment:
-      APP_NAME: NEXORA
+
+      # ----------------------------------------
+      # Laravel
+      # ----------------------------------------
+      APP_NAME: "Persona"
       APP_ENV: production
       APP_DEBUG: "false"
-      APP_URL: ${APP_URL:-http://localhost:8099}
+      APP_URL: "https://persona.skb-prime.web.id"
       APP_KEY: ${APP_KEY}
 
+      APP_LOCALE: id
+      APP_FALLBACK_LOCALE: id
+      APP_FAKER_LOCALE: id_ID
+
+      APP_MAINTENANCE_DRIVER: file
+      BCRYPT_ROUNDS: 12
+
+      # ----------------------------------------
       # Database
+      # Mengikuti .env Laravel sebelumnya
+      # ----------------------------------------
       DB_CONNECTION: mysql
       DB_HOST: db
       DB_PORT: 3306
@@ -30,45 +44,104 @@ services:
       DB_USERNAME: laravel
       DB_PASSWORD: laravel_password
 
+      # ----------------------------------------
       # Session
+      # ----------------------------------------
       SESSION_DRIVER: database
       SESSION_LIFETIME: 120
       SESSION_ENCRYPT: "false"
       SESSION_PATH: /
-      SESSION_DOMAIN: null
-      SESSION_SECURE_COOKIE: "false"
+      SESSION_DOMAIN: ""
+      SESSION_SECURE_COOKIE: "true"
 
+      # ----------------------------------------
       # Cache & Queue
+      # ----------------------------------------
       CACHE_STORE: database
       QUEUE_CONNECTION: database
 
+      # ----------------------------------------
+      # Broadcast
+      # ----------------------------------------
+      BROADCAST_CONNECTION: log
+
+      # ----------------------------------------
       # Filesystem
+      # ----------------------------------------
       FILESYSTEM_DISK: local
 
+      # ----------------------------------------
       # Logging
+      # ----------------------------------------
       LOG_CHANNEL: stack
       LOG_STACK: single
+      LOG_DEPRECATIONS_CHANNEL: null
       LOG_LEVEL: error
 
+      # ----------------------------------------
+      # Redis
+      # ----------------------------------------
+      REDIS_CLIENT: phpredis
+      REDIS_HOST: 127.0.0.1
+      REDIS_PASSWORD: null
+      REDIS_PORT: 6379
+
+      # ----------------------------------------
+      # Memcached
+      # ----------------------------------------
+      MEMCACHED_HOST: 127.0.0.1
+
+      # ----------------------------------------
+      # Mail
+      # ----------------------------------------
+      MAIL_MAILER: log
+      MAIL_SCHEME: null
+      MAIL_HOST: 127.0.0.1
+      MAIL_PORT: 2525
+      MAIL_USERNAME: null
+      MAIL_PASSWORD: null
+      MAIL_FROM_ADDRESS: "hello@example.com"
+      MAIL_FROM_NAME: "${APP_NAME}"
+
+      # ----------------------------------------
+      # AWS
+      # ----------------------------------------
+      AWS_ACCESS_KEY_ID: ""
+      AWS_SECRET_ACCESS_KEY: ""
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_BUCKET: ""
+      AWS_USE_PATH_STYLE_ENDPOINT: "false"
+
+      # ----------------------------------------
+      # Vite
+      # ----------------------------------------
+      VITE_APP_NAME: "Persona"
+
+      # ----------------------------------------
+      # SweetAlert
+      # ----------------------------------------
+      SWEET_ALERT_THEME: bootstrap-4
+      SWEET_ALERT_CONFIRM_DELETE_CONFIRM_BUTTON_TEXT: "Hapus Data"
+
     volumes:
-      - nexora_storage:/var/www/html/storage
+      - persona_storage:/var/www/html/storage
 
     depends_on:
       db:
         condition: service_healthy
 
     networks:
-      - nexora_network
+      - persona_network
       - proxy
 
 
   # ========================================
-  # NEXORA - MySQL Database
+  # PERSONA - MySQL Database
   # ========================================
   db:
     image: mysql:8.0
 
-    container_name: nexora-db
+    container_name: persona-db
 
     restart: unless-stopped
 
@@ -79,7 +152,7 @@ services:
       MYSQL_ROOT_PASSWORD: root_password
 
     volumes:
-      - nexora_mysql_data:/var/lib/mysql
+      - persona_mysql_data:/var/lib/mysql
 
     healthcheck:
       test:
@@ -98,7 +171,7 @@ services:
       start_period: 30s
 
     networks:
-      - nexora_network
+      - persona_network
 
 
 # ========================================
@@ -106,10 +179,10 @@ services:
 # ========================================
 volumes:
 
-  nexora_mysql_data:
+  persona_mysql_data:
     driver: local
 
-  nexora_storage:
+  persona_storage:
     driver: local
 
 
@@ -118,7 +191,7 @@ volumes:
 # ========================================
 networks:
 
-  nexora_network:
+  persona_network:
     driver: bridge
 
   proxy:
