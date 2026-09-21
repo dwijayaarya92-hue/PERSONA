@@ -8,8 +8,6 @@ services:
       context: .
       dockerfile: Dockerfile
 
-    container_name: persona-app
-
     restart: unless-stopped
 
     ports:
@@ -35,7 +33,6 @@ services:
 
       # ----------------------------------------
       # Database
-      # Mengikuti .env Laravel sebelumnya
       # ----------------------------------------
       DB_CONNECTION: mysql
       DB_HOST: db
@@ -132,7 +129,6 @@ services:
 
     networks:
       - persona_network
-      - proxy
 
 
   # ========================================
@@ -140,8 +136,6 @@ services:
   # ========================================
   db:
     image: mysql:8.0
-
-    container_name: persona-db
 
     restart: unless-stopped
 
@@ -193,6 +187,3 @@ networks:
 
   persona_network:
     driver: bridge
-
-  proxy:
-    external: true
