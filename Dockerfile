@@ -20,17 +20,18 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libicu-dev \
     libpq-dev \
-    nginx \
-    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 # ------------------------------------------
-# PHP extensions
+# Configure GD
 # ------------------------------------------
 RUN docker-php-ext-configure gd \
     --with-freetype \
     --with-jpeg
 
+# ------------------------------------------
+# Install PHP extensions
+# ------------------------------------------
 RUN docker-php-ext-install -j$(nproc) \
     pdo_mysql \
     mbstring \
@@ -53,10 +54,12 @@ WORKDIR /var/www/html
 
 # ------------------------------------------
 # Copy Composer files first
-# Untuk mempercepat Docker build cache
 # ------------------------------------------
 COPY composer.json composer.lock ./
 
+# ------------------------------------------
+# Install Laravel dependencies
+# ------------------------------------------
 RUN composer install \
     --no-dev \
     --no-interaction \
@@ -70,7 +73,7 @@ RUN composer install \
 COPY . .
 
 # ------------------------------------------
-# Laravel permissions
+# Laravel directories
 # ------------------------------------------
 RUN mkdir -p \
     storage/framework/cache \
@@ -79,6 +82,9 @@ RUN mkdir -p \
     storage/logs \
     bootstrap/cache
 
+# ------------------------------------------
+# Laravel permissions
+# ------------------------------------------
 RUN chown -R www-data:www-data \
     storage \
     bootstrap/cache
@@ -88,25 +94,11 @@ RUN chmod -R 775 \
     bootstrap/cache
 
 # ------------------------------------------
-# Nginx configuration
+# PHP-FPM
 # ------------------------------------------
-RUN rm -f /etc/nginx/sites-enabled/default
-
-COPY docker/nginx/default.conf \
-    /etc/nginx/conf.d/default.conf
+EXPOSE 9000
 
 # ------------------------------------------
-# Supervisor configuration
+# Start PHP-FPM only
 # ------------------------------------------
-COPY docker/supervisord.conf \
-    /etc/supervisor/conf.d/supervisord.conf
-
-# ------------------------------------------
-# Persona application port
-# ------------------------------------------
-EXPOSE 80
-
-# ------------------------------------------
-# Start PHP-FPM + Nginx
-# ------------------------------------------
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+CMD ["php-fpm"]
