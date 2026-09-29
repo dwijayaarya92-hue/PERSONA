@@ -1,13 +1,8 @@
-# ==========================================
-# Persona - Laravel 12
-# PHP 8.2
-# ==========================================
+FROM php:8.2-apache
 
-FROM php:8.2-cli
-
-# ------------------------------------------
-# System dependencies
-# ------------------------------------------
+# ========================================
+# Install dependencies
+# ========================================
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -20,20 +15,21 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libicu-dev \
-    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# ------------------------------------------
-# GD
-# ------------------------------------------
+
+# ========================================
+# Configure GD
+# ========================================
 RUN docker-php-ext-configure gd \
     --with-freetype \
     --with-jpeg
 
-# ------------------------------------------
-# PHP extensions
-# ------------------------------------------
-RUN docker-php-ext-install -j$(nproc) \
+
+# ========================================
+# PHP Extensions
+# ========================================
+RUN docker-php-ext-install \
     pdo_mysql \
     mbstring \
     exif \
@@ -43,16 +39,35 @@ RUN docker-php-ext-install -j$(nproc) \
     zip \
     intl
 
-# ------------------------------------------
+
+# ========================================
+# Apache Rewrite
+# ========================================
+RUN a2enmod rewrite
+
+
+# ========================================
+# Laravel public directory
+# ========================================
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+RUN sed -ri \
+    -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+    /etc/apache2/sites-available/000-default.conf \
+    /etc/apache2/apache2.conf
+
+
+# ========================================
 # Composer
-# ------------------------------------------
+# ========================================
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+
+# ========================================
+# Laravel
+# ========================================
 WORKDIR /var/www/html
 
-# ------------------------------------------
-# Composer dependencies
-# ------------------------------------------
 COPY composer.json composer.lock ./
 
 RUN composer install \
@@ -62,14 +77,12 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
-# ------------------------------------------
-# Laravel application
-# ------------------------------------------
 COPY . .
 
-# ------------------------------------------
-# Laravel directories
-# ------------------------------------------
+
+# ========================================
+# Laravel permissions
+# ========================================
 RUN mkdir -p \
     storage/framework/cache \
     storage/framework/sessions \
@@ -77,9 +90,6 @@ RUN mkdir -p \
     storage/logs \
     bootstrap/cache
 
-# ------------------------------------------
-# Permissions
-# ------------------------------------------
 RUN chown -R www-data:www-data \
     storage \
     bootstrap/cache
@@ -88,9 +98,10 @@ RUN chmod -R 775 \
     storage \
     bootstrap/cache
 
-# ------------------------------------------
-# Laravel HTTP server
-# ------------------------------------------
-EXPOSE 8000
 
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
+# ========================================
+# Apache
+# ========================================
+EXPOSE 80
+
+CMD ["apache2-foreground"]
