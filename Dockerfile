@@ -48,7 +48,10 @@ RUN sed -ri \
     /etc/apache2/sites-available/000-default.conf \
     /etc/apache2/apache2.conf
 
-# Hilangkan warning AH00558
+# ========================================
+# Apache ServerName
+# Menghilangkan warning AH00558
+# ========================================
 RUN echo "ServerName persona.skb-prime.web.id" \
     > /etc/apache2/conf-available/servername.conf \
     && a2enconf servername
@@ -73,7 +76,7 @@ RUN composer install \
     --no-scripts
 
 # ========================================
-# Node dependencies
+# Node / Vite dependencies
 # ========================================
 COPY package.json package-lock.json* ./
 
