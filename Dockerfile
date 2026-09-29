@@ -1,7 +1,7 @@
 FROM php:8.2-apache
 
 # ========================================
-# Install dependencies
+# System dependencies
 # ========================================
 RUN apt-get update && apt-get install -y \
     git \
@@ -15,20 +15,17 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     libicu-dev \
+    nodejs \
+    npm \
     && rm -rf /var/lib/apt/lists/*
 
-
 # ========================================
-# Configure GD
+# PHP extensions
 # ========================================
 RUN docker-php-ext-configure gd \
     --with-freetype \
     --with-jpeg
 
-
-# ========================================
-# PHP Extensions
-# ========================================
 RUN docker-php-ext-install \
     pdo_mysql \
     mbstring \
@@ -39,16 +36,11 @@ RUN docker-php-ext-install \
     zip \
     intl
 
-
 # ========================================
-# Apache Rewrite
+# Apache
 # ========================================
 RUN a2enmod rewrite
 
-
-# ========================================
-# Laravel public directory
-# ========================================
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 RUN sed -ri \
@@ -56,18 +48,21 @@ RUN sed -ri \
     /etc/apache2/sites-available/000-default.conf \
     /etc/apache2/apache2.conf
 
+# Hilangkan warning AH00558
+RUN echo "ServerName persona.skb-prime.web.id" \
+    > /etc/apache2/conf-available/servername.conf \
+    && a2enconf servername
 
 # ========================================
 # Composer
 # ========================================
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-
-# ========================================
-# Laravel
-# ========================================
 WORKDIR /var/www/html
 
+# ========================================
+# Laravel dependencies
+# ========================================
 COPY composer.json composer.lock ./
 
 RUN composer install \
@@ -77,11 +72,25 @@ RUN composer install \
     --optimize-autoloader \
     --no-scripts
 
-COPY . .
+# ========================================
+# Node dependencies
+# ========================================
+COPY package.json package-lock.json* ./
 
+RUN npm install
 
 # ========================================
-# Laravel permissions
+# Copy Laravel source
+# ========================================
+COPY . .
+
+# ========================================
+# Build Vite
+# ========================================
+RUN npm run build
+
+# ========================================
+# Laravel directories
 # ========================================
 RUN mkdir -p \
     storage/framework/cache \
@@ -97,7 +106,6 @@ RUN chown -R www-data:www-data \
 RUN chmod -R 775 \
     storage \
     bootstrap/cache
-
 
 # ========================================
 # Apache
