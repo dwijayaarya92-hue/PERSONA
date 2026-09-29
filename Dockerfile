@@ -1,11 +1,12 @@
 # ==========================================
-# Persona - Laravel 12 - PHP 8.2 FPM
+# Persona - Laravel 12
+# PHP 8.2
 # ==========================================
 
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 # ------------------------------------------
-# Install system dependencies
+# System dependencies
 # ------------------------------------------
 RUN apt-get update && apt-get install -y \
     git \
@@ -23,14 +24,14 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # ------------------------------------------
-# Configure GD
+# GD
 # ------------------------------------------
 RUN docker-php-ext-configure gd \
     --with-freetype \
     --with-jpeg
 
 # ------------------------------------------
-# Install PHP extensions
+# PHP extensions
 # ------------------------------------------
 RUN docker-php-ext-install -j$(nproc) \
     pdo_mysql \
@@ -43,23 +44,17 @@ RUN docker-php-ext-install -j$(nproc) \
     intl
 
 # ------------------------------------------
-# Install Composer
+# Composer
 # ------------------------------------------
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# ------------------------------------------
-# Working directory
-# ------------------------------------------
 WORKDIR /var/www/html
 
 # ------------------------------------------
-# Copy Composer files first
+# Composer dependencies
 # ------------------------------------------
 COPY composer.json composer.lock ./
 
-# ------------------------------------------
-# Install Laravel dependencies
-# ------------------------------------------
 RUN composer install \
     --no-dev \
     --no-interaction \
@@ -68,7 +63,7 @@ RUN composer install \
     --no-scripts
 
 # ------------------------------------------
-# Copy Laravel project
+# Laravel application
 # ------------------------------------------
 COPY . .
 
@@ -83,7 +78,7 @@ RUN mkdir -p \
     bootstrap/cache
 
 # ------------------------------------------
-# Laravel permissions
+# Permissions
 # ------------------------------------------
 RUN chown -R www-data:www-data \
     storage \
@@ -94,11 +89,8 @@ RUN chmod -R 775 \
     bootstrap/cache
 
 # ------------------------------------------
-# PHP-FPM
+# Laravel HTTP server
 # ------------------------------------------
-EXPOSE 9000
+EXPOSE 8000
 
-# ------------------------------------------
-# Start PHP-FPM only
-# ------------------------------------------
-CMD ["php-fpm"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

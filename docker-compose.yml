@@ -1,7 +1,7 @@
 services:
 
   # ========================================
-  # PERSONA - Laravel / PHP-FPM
+  # PERSONA - Laravel Application
   # ========================================
   app:
     build:
@@ -11,6 +11,9 @@ services:
     container_name: persona-app
 
     restart: unless-stopped
+
+    ports:
+      - "8099:8000"
 
     environment:
 
@@ -119,7 +122,6 @@ services:
       SWEET_ALERT_THEME: bootstrap-4
       SWEET_ALERT_CONFIRM_DELETE_CONFIRM_BUTTON_TEXT: "Hapus Data"
 
-    # Laravel source code
     volumes:
       - persona_code:/var/www/html
       - persona_storage:/var/www/html/storage
@@ -171,40 +173,6 @@ services:
       - persona_network
 
 
-  # ========================================
-  # PERSONA - Nginx
-  # ========================================
-  nginx:
-    image: nginx:alpine
-
-    container_name: persona-nginx
-
-    restart: unless-stopped
-
-    ports:
-      - "8099:80"
-
-    volumes:
-      # Laravel project
-      - persona_code:/var/www/html:ro
-
-      # Laravel storage
-      - persona_storage:/var/www/html/storage
-
-      # Nginx configuration
-      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-
-    depends_on:
-      - app
-
-    networks:
-      # Communication with Laravel
-      - persona_network
-
-      # Communication with Nginx Proxy Manager
-      - proxy
-
-
 # ========================================
 # Volumes
 # ========================================
@@ -225,10 +193,5 @@ volumes:
 # ========================================
 networks:
 
-  # Internal Persona network
   persona_network:
     driver: bridge
-
-  # Existing Nginx Proxy Manager network
-  proxy:
-    external: true
