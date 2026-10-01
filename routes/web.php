@@ -1,139 +1,416 @@
-<?php
+<!DOCTYPE html>
+<html lang="id">
 
-use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\BagianController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PegawaiController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\UserController;
-use App\Models\Pegawai;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+<head>
 
+    <title>Login | Aplikasi Manajemen Pegawai</title>
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
+    <!-- Meta -->
+    <meta charset="utf-8">
 
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
 
-// =====================================================
-// HALAMAN AWAL
-// =====================================================
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-Route::get('/', function () {
-    return view('auth.login');
-});
+    <meta name="description"
+          content="Aplikasi Manajemen Pegawai">
+
+    <meta name="author"
+          content="Aplikasi Manajemen Pegawai">
 
 
-// =====================================================
-// AUTHENTICATION
-// Login, Register, Logout
-// Reset password bawaan Laravel dinonaktifkan
-// =====================================================
-
-Auth::routes([
-    'reset' => false,
-]);
+    <!-- Favicon -->
+    <link rel="icon"
+          href="{{ asset('template/dist/assets/images/favicon.svg') }}"
+          type="image/x-icon">
 
 
-// =====================================================
-// LUPA PASSWORD
-// =====================================================
-
-// Menampilkan halaman lupa password
-Route::get('/password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])
-    ->name('password.request');
-
-// Memproses perubahan password secara langsung
-Route::post('/password/reset-direct', [ForgotPasswordController::class, 'resetDirect'])
-    ->name('password.reset.direct');
+    <!-- Google Font -->
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700&display=swap"
+          id="main-font-link">
 
 
-// =====================================================
-// DASHBOARD
-// =====================================================
-
-Route::get('/home', [HomeController::class, 'index'])
-    ->name('home')
-    ->middleware('auth');
+    <!-- Tabler Icons -->
+    <link rel="stylesheet"
+          href="{{ asset('template/dist/assets/fonts/tabler-icons.min.css') }}">
 
 
-// =====================================================
-// PROFILE
-// =====================================================
-
-Route::middleware('auth')->group(function () {
-
-    // Menampilkan halaman edit profile
-    Route::get('/profile/edit', [ProfileController::class, 'edit'])
-        ->name('profile.edit');
-
-    // Menyimpan perubahan profile
-    Route::put('/profile/update', [ProfileController::class, 'update'])
-        ->name('profile.update');
-});
+    <!-- Feather Icons -->
+    <link rel="stylesheet"
+          href="{{ asset('template/dist/assets/fonts/feather.css') }}">
 
 
-// =====================================================
-// TEST QUERY
-// =====================================================
-
-Route::get('/coba_query', function () {
-
-    $pegawai = Pegawai::all();
-
-    dd($pegawai->toArray());
-
-})->middleware('auth');
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="{{ asset('template/dist/assets/fonts/fontawesome.css') ?>">
 
 
-// =====================================================
-// DATA PEGAWAI
-// =====================================================
-
-Route::resource('pegawai', PegawaiController::class)
-    ->middleware('auth');
-
-// Download foto pegawai
-Route::get('/download-foto/{id}', [PegawaiController::class, 'downloadFoto'])
-    ->name('download-foto')
-    ->middleware('auth');
+    <!-- Material Icons -->
+    <link rel="stylesheet"
+          href="{{ asset('template/dist/assets/fonts/material.css') }}">
 
 
-// =====================================================
-// DATA USERS
-// Hanya Admin dan Supervisor
-// =====================================================
+    <!-- Template CSS -->
+    <link rel="stylesheet"
+          href="{{ asset('template/dist/assets/css/style.css') }}"
+          id="main-style-link">
 
-Route::resource('users', UserController::class)
-    ->middleware([
-        'auth',
-        'isSupervisor',
-    ]);
-
-// Mengubah role user
-Route::post('/user-update-role', [UserController::class, 'updateRole'])
-    ->name('users.update-roles')
-    ->middleware([
-        'auth',
-        'isSupervisor',
-    ]);
+    <link rel="stylesheet"
+          href="{{ asset('template/dist/assets/css/style-preset.css') }}">
 
 
-// =====================================================
-// DATA BAGIAN
-// =====================================================
+    @vite(['resources/js/app.js'])
 
-Route::resource('bagian', BagianController::class)
-    ->middleware('auth');
+</head>
 
 
-// =====================================================
-// FALLBACK / 404
-// =====================================================
+<body>
 
-Route::fallback(function () {
-    return view('404');
-});
+    <!-- Pre-loader -->
+    <div class="loader-bg">
+
+        <div class="loader-track">
+            <div class="loader-fill"></div>
+        </div>
+
+    </div>
+    <!-- End Pre-loader -->
+
+
+    <!-- Main Login -->
+    <div class="auth-main">
+
+        <div class="auth-wrapper v3">
+
+            <div class="auth-form">
+
+
+                <!-- Logo -->
+                <div class="auth-header text-center">
+
+                    <a href="{{ url('/') }}">
+
+                        <img
+                            src="{{ asset('template/dist/assets/images/logo-dark.svg') }}"
+                            alt="Logo Aplikasi Manajemen Pegawai"
+                            style="max-width: 220px;"
+                        >
+
+                    </a>
+
+                </div>
+
+
+                <!-- Login Card -->
+                <div class="card my-3">
+
+                    <div class="card-body">
+
+
+                        <!-- Judul -->
+                        <div class="text-center mb-4">
+
+                            <h3 class="mb-1">
+                                <b>Login</b>
+                            </h3>
+
+                            <p class="text-muted mb-0">
+                                Silakan masuk ke akun Anda
+                            </p>
+
+                        </div>
+
+
+                        <!-- Pesan Berhasil -->
+                        @if (session('success'))
+
+                            <div class="alert alert-success" role="alert">
+
+                                <i class="ti ti-check me-1"></i>
+
+                                {{ session('success') }}
+
+                            </div>
+
+                        @endif
+
+
+                        <!-- Pesan Error -->
+                        @if (session('error'))
+
+                            <div class="alert alert-danger" role="alert">
+
+                                <i class="ti ti-alert-circle me-1"></i>
+
+                                {{ session('error') }}
+
+                            </div>
+
+                        @endif
+
+
+                        <!-- Form Login -->
+                        <form
+                            method="POST"
+                            action="{{ route('login') }}"
+                        >
+
+                            @csrf
+
+
+                            <!-- Email -->
+                            <div class="form-group mb-3">
+
+                                <label
+                                    for="email"
+                                    class="form-label"
+                                >
+                                    Email
+                                </label>
+
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value="{{ old('email') }}"
+                                    class="form-control @error('email') is-invalid @enderror"
+                                    placeholder="Masukkan email"
+                                    autocomplete="email"
+                                    required
+                                    autofocus
+                                >
+
+                                @error('email')
+
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+
+                                @enderror
+
+                            </div>
+
+
+                            <!-- Password -->
+                            <div class="form-group mb-3">
+
+                                <label
+                                    for="password"
+                                    class="form-label"
+                                >
+                                    Password
+                                </label>
+
+
+                                <div class="input-group">
+
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        class="form-control @error('password') is-invalid @enderror"
+                                        placeholder="Masukkan password"
+                                        autocomplete="current-password"
+                                        required
+                                    >
+
+
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-secondary"
+                                        onclick="togglePassword()"
+                                        title="Tampilkan password"
+                                    >
+
+                                        <i
+                                            class="ti ti-eye"
+                                            id="passwordIcon"
+                                        ></i>
+
+                                    </button>
+
+                                </div>
+
+
+                                @error('password')
+
+                                    <div class="text-danger small mt-1">
+                                        {{ $message }}
+                                    </div>
+
+                                @enderror
+
+                            </div>
+
+
+                            <!-- Remember & Forgot Password -->
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+
+
+                                <!-- Remember Me -->
+                                <div class="form-check">
+
+                                    <input
+                                        class="form-check-input input-primary"
+                                        type="checkbox"
+                                        id="remember"
+                                        name="remember"
+                                        {{ old('remember') ? 'checked' : '' }}
+                                    >
+
+                                    <label
+                                        class="form-check-label text-muted"
+                                        for="remember"
+                                    >
+                                        Ingat saya
+                                    </label>
+
+                                </div>
+
+
+                                <!-- Forgot Password -->
+                                @if (Route::has('password.request'))
+
+                                    <a
+                                        href="{{ route('password.request') }}"
+                                        class="text-primary"
+                                    >
+                                        Lupa Password?
+                                    </a>
+
+                                @endif
+
+                            </div>
+
+
+                            <!-- Tombol Login -->
+                            <div class="d-grid mt-4">
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                >
+
+                                    <i class="ti ti-login me-1"></i>
+
+                                    Login
+
+                                </button>
+
+                            </div>
+
+
+                            <!-- Registrasi -->
+                            @if (Route::has('register'))
+
+                                <div class="text-center mt-4">
+
+                                    <span class="text-muted">
+                                        Belum punya akun?
+                                    </span>
+
+                                    <a
+                                        href="{{ route('register') }}"
+                                        class="link-primary fw-semibold ms-1"
+                                    >
+                                        Daftar di sini
+                                    </a>
+
+                                </div>
+
+                            @endif
+
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+                <div class="auth-footer text-center">
+
+                    <p class="m-0 text-muted">
+                        © {{ date('Y') }} Aplikasi Manajemen Pegawai
+                    </p>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- End Main Login -->
+
+
+    <!-- Required JS -->
+
+    <script src="{{ asset('template/dist/assets/js/plugins/popper.min.js') }}"></script>
+
+    <script src="{{ asset('template/dist/assets/js/plugins/simplebar.min.js') }}"></script>
+
+    <script src="{{ asset('template/dist/assets/js/plugins/bootstrap.min.js') }}"></script>
+
+    <script src="{{ asset('template/dist/assets/js/fonts/custom-font.js') }}"></script>
+
+    <script src="{{ asset('template/dist/assets/js/pcoded.js') }}"></script>
+
+    <script src="{{ asset('template/dist/assets/js/plugins/feather.min.js') }}"></script>
+
+
+    <!-- Template Configuration -->
+    <script>
+
+        layout_change('light');
+
+        change_box_container('false');
+
+        layout_rtl_change('false');
+
+        preset_change('preset-1');
+
+        font_change('Public-Sans');
+
+    </script>
+
+
+    <!-- Toggle Password -->
+    <script>
+
+        function togglePassword() {
+
+            const password = document.getElementById('password');
+
+            const icon = document.getElementById('passwordIcon');
+
+
+            if (password.type === 'password') {
+
+                password.type = 'text';
+
+                icon.classList.remove('ti-eye');
+
+                icon.classList.add('ti-eye-off');
+
+            } else {
+
+                password.type = 'password';
+
+                icon.classList.remove('ti-eye-off');
+
+                icon.classList.add('ti-eye');
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>

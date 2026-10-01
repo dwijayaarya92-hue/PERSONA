@@ -31,7 +31,9 @@ class User extends Authenticatable
         ];
     }
 
-    // PASTIKAN METHOD INI ADA DI DALAM MODEL USER
+    /**
+     * Relasi ke Role
+     */
     public function role()
     {
         return $this->belongsTo(Role::class, 'role_id', 'id');

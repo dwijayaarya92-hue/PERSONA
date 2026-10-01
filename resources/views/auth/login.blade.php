@@ -2,7 +2,6 @@
 <html lang="id">
 
 <head>
-
     <title>Login | Aplikasi Manajemen Pegawai</title>
 
     <!-- Meta -->
@@ -51,7 +50,6 @@
           href="{{ asset('template/dist/assets/css/style-preset.css') }}">
 
     @vite(['resources/js/app.js'])
-
 </head>
 
 
@@ -77,13 +75,11 @@
                 <div class="auth-header text-center">
 
                     <a href="{{ url('/') }}">
-
                         <img
                             src="{{ asset('template/dist/assets/images/logo-dark.svg') }}"
-                            alt="Logo"
+                            alt="Logo Aplikasi Manajemen Pegawai"
                             style="max-width: 220px;"
                         >
-
                     </a>
 
                 </div>
@@ -93,7 +89,6 @@
                 <div class="card my-3">
 
                     <div class="card-body">
-
 
                         <!-- Judul -->
                         <div class="text-center mb-4">
@@ -113,11 +108,8 @@
                         @if (session('success'))
 
                             <div class="alert alert-success" role="alert">
-
                                 <i class="ti ti-check me-1"></i>
-
                                 {{ session('success') }}
-
                             </div>
 
                         @endif
@@ -127,11 +119,8 @@
                         @if (session('error'))
 
                             <div class="alert alert-danger" role="alert">
-
                                 <i class="ti ti-alert-circle me-1"></i>
-
                                 {{ session('error') }}
-
                             </div>
 
                         @endif
@@ -141,7 +130,6 @@
                         <form action="{{ route('login') }}" method="POST">
 
                             @csrf
-
 
                             <!-- Email -->
                             <div class="form-group mb-3">
@@ -163,11 +151,9 @@
                                 >
 
                                 @error('email')
-
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
-
                                 @enderror
 
                             </div>
@@ -204,11 +190,9 @@
                                 </div>
 
                                 @error('password')
-
                                     <div class="text-danger small mt-1">
                                         {{ $message }}
                                     </div>
-
                                 @enderror
 
                             </div>
@@ -264,6 +248,27 @@
 
                             </div>
 
+
+                            <!-- Registrasi -->
+                            @if (Route::has('register'))
+
+                                <div class="text-center mt-4">
+
+                                    <span class="text-muted">
+                                        Belum punya akun?
+                                    </span>
+
+                                    <a
+                                        href="{{ route('register') }}"
+                                        class="link-primary fw-semibold"
+                                    >
+                                        Daftar di sini
+                                    </a>
+
+                                </div>
+
+                            @endif
+
                         </form>
 
                     </div>
@@ -314,7 +319,6 @@
 
     <!-- Toggle Password -->
     <script>
-
         function togglePassword() {
 
             const password = document.getElementById('password');
@@ -335,9 +339,7 @@
                 icon.classList.add('ti-eye');
 
             }
-
         }
-
     </script>
 
 </body>
